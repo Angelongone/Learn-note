@@ -55,6 +55,9 @@ AUTO_INCREMENT定义列为自增的属性，一般用于主键，数值会自动
 PRIMARY KEY关键字用于定义列为主键。 您可以使用多列来定义主键，列间以逗号分隔。
 ENGINE 设置存储引擎，CHARSET 设置编码。
 
+mysql> CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),    
+    -> species VARCHAR(20), sex CHAR(1), birth DATE, death DATE); 
+
 通过命令提示符创建表：
 mysql> use RUNOOB;
 Database changed
@@ -102,6 +105,10 @@ Query OK, 1 rows affected (0.00 sec)
 
 读取数据表： select * from runoob_tbl;
 
+
+要想将文本文件“pet.txt”装载到pet表中，使用这个命令： 
+mysql> LOAD DATA LOCAL INFILE '/path/pet.txt' INTO TABLE pet; 
+
 ************ 查询 ****************************************************************8
 查询数据 SELECT 语法：
 SELECT column_name,column_name
@@ -120,12 +127,25 @@ SELECT * from runoob_tbl WHERE runoob_author='菜鸟教程';
 mysql> SELECT * from runoob_tbl WHERE BINARY（由他决定） runoob_author='runoob.com';
 Empty set (0.01 sec)
 
+name和birth列： 
+mysql> SELECT name, birth FROM pet; 
+
+找出谁拥有宠物，使用这个查询： 
+mysql> SELECT owner FROM pet; 
+
 ************ 更新 *****************************************************************************
 UPDATE 命令修改 MySQL 数据表数据的通用 SQL 语法：
 UPDATE table_name SET field1=new-value1, field2=new-value2
 [WHERE Clause]
 
 mysql> UPDATE runoob_tbl SET runoob_title='学习 C++' WHERE runoob_id=3;
+
+ 编辑文件“pet.txt”改正错误，然后使用DELETE和LOAD DATA清空并重新装载表: ·                
+ mysql> DELETE FROM pet; ·                
+ mysql> LOAD DATA LOCAL INFILE 'pet.txt' INTO TABLE pet; 
+ 
+ 如果你想要验证你对Bowser的生日所做的更改，按下述方法选 择Bowser的记录： 
+ mysql> SELECT * FROM pet WHERE name = 'Bowser'; 
 
 ************* 删除表中的数据 ******************************************************************
 DELETE 语句从 MySQL 数据表中删除数据的通用语法：
