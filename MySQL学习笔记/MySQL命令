@@ -1,47 +1,53 @@
-USE 数据库名 : mysql> use RUNOOB;
+# MySQL
+## USE 数据库名 : mysql> use RUNOOB;
 选择要操作的Mysql数据库，使用该命令后所有Mysql命令都只针对该数据库。
 
-**************** 表查询 **********************************************************************************************
-SHOW DATABASES:  mysql> SHOW DATABASES;
-列出 MySQL 数据库管理系统的数据库列表。
+## 表查询
+***
+* SHOW DATABASES:  mysql> SHOW DATABASES;
+> 列出 MySQL 数据库管理系统的数据库列表。
 
-SHOW TABLES:  mysql> use RUNOOB;
-显示指定数据库的所有表，使用该命令前需要使用 use 命令来选择要操作的数据库。
+* SHOW TABLES:  mysql> use RUNOOB;
+> 显示指定数据库的所有表，使用该命令前需要使用 use 命令来选择要操作的数据库。
 
-SHOW COLUMNS FROM 数据表:  mysql> SHOW COLUMNS FROM runoob_tbl;
-显示数据表的属性，属性类型，主键信息 ，是否为 NULL，默认值等其他信息。
+* SHOW COLUMNS FROM 数据表:  mysql> SHOW COLUMNS FROM runoob_tbl;
+> 显示数据表的属性，属性类型，主键信息 ，是否为 NULL，默认值等其他信息。
 
-SHOW INDEX FROM 数据表:  mysql> SHOW INDEX FROM runoob_tbl;
-显示数据表的详细索引信息，包括PRIMARY KEY（主键）。
+* SHOW INDEX FROM 数据表:  mysql> SHOW INDEX FROM runoob_tbl;
+> 显示数据表的详细索引信息，包括PRIMARY KEY（主键）。
 
-SHOW TABLE STATUS LIKE [FROM db_name] [LIKE 'pattern'] \G:
+* SHOW TABLE STATUS LIKE [FROM db_name] [LIKE 'pattern'] \G:
+> 
 mysql> SHOW TABLE STATUS  FROM RUNOOB;   # 显示数据库 RUNOOB 中所有表的信息
 mysql> SHOW TABLE STATUS from RUNOOB LIKE 'runoob%';     # 表名以runoob开头的表的信息
 mysql> SHOW TABLE STATUS from RUNOOB LIKE 'runoob%'\G;   # 加上 \G，查询结果按列打印
 该命令将输出Mysql数据库管理系统的性能及统计信息。
 
-*********** 创建数据库 ********************************************************************
-CREATE DATABASE 数据库名;   mysql> create DATABASE RUNOOB;
-create 命令创建数据库
+## 创建数据库
+***
+* CREATE DATABASE 数据库名;   mysql> create DATABASE RUNOOB;
+> create 命令创建数据库
 
-终端命令行直接创建数据库 ：
-[root@host]# mysqladmin -u root -p create RUNOOB
+* 终端命令行直接创建数据库 ：
+> [root@host]# mysqladmin -u root -p create RUNOOB
 
-********** 删除数据库 ********************************************************************
-drop database <数据库名>;   mysql> drop database RUNOOB;
-drop 命令删除数据库
+## 删除数据库
+***
+* drop database <数据库名>;   mysql> drop database RUNOOB;
+> drop 命令删除数据库
 
-终端命令行直接删除数据库 ：
-[root@host]# mysqladmin -u root -p drop RUNOOB
+* 终端命令行直接删除数据库 ：
+> [root@host]# mysqladmin -u root -p drop RUNOOB
 
-********* 创建数据表 ***********************************************************************
-创建MySQL数据表需要以下信息：
-          表名
-          表字段名
-          定义每个表字段
+## 创建数据表
+***
+* 创建MySQL数据表需要以下信息：
+> 表名
+表字段名
+定义每个表字段
 
-创建MySQL数据表的SQL通用语法： CREATE TABLE table_name (column_name column_type);
-CREATE TABLE IF NOT EXISTS `runoob_tbl`(
+* 创建MySQL数据表的SQL通用语法： CREATE TABLE table_name (column_name column_type);
+> CREATE TABLE IF NOT EXISTS `runoob_tbl`(
    `runoob_id` INT UNSIGNED AUTO_INCREMENT,
    `runoob_title` VARCHAR(100) NOT NULL,
    `runoob_author` VARCHAR(40) NOT NULL,
@@ -49,16 +55,20 @@ CREATE TABLE IF NOT EXISTS `runoob_tbl`(
    PRIMARY KEY ( `runoob_id` )
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-实例解析：
-如果你不想字段为 NULL 可以设置字段的属性为 NOT NULL， 在操作数据库时如果输入该字段的数据为NULL ，就会报错。
-AUTO_INCREMENT定义列为自增的属性，一般用于主键，数值会自动加1。
-PRIMARY KEY关键字用于定义列为主键。 您可以使用多列来定义主键，列间以逗号分隔。
-ENGINE 设置存储引擎，CHARSET 设置编码。
+* 实例解析：
+          * 如果你不想字段为 NULL 可以设置字段的属性为 NOT NULL， 在操作数据库时如果输入该字段的数据为NULL ，就会报错。
+          >
+          1. AUTO_INCREMENT定义列为自增的属性，一般用于主键，数值会自动加1。
+          2. PRIMARY KEY关键字用于定义列为主键。 您可以使用多列来定义主键，列间以逗号分隔。
+          3. ENGINE 设置存储引擎，CHARSET 设置编码。
 
+* ```mysql
 mysql> CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),    
-    -> species VARCHAR(20), sex CHAR(1), birth DATE, death DATE); 
+           -> species VARCHAR(20), sex CHAR(1), birth DATE, death DATE); 
+```
 
-通过命令提示符创建表：
+* 通过命令提示符创建表：
+```mysql
 mysql> use RUNOOB;
 Database changed
 mysql> CREATE TABLE runoob_tbl(
@@ -68,6 +78,7 @@ mysql> CREATE TABLE runoob_tbl(
    -> submission_date DATE,
    -> PRIMARY KEY ( runoob_id )
    -> )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
 Query OK, 0 rows affected (0.16 sec)
 注意：MySQL命令终止符为分号 ; 
 注意： -> 是换行符标识，不要复制
