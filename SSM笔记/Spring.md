@@ -1,5 +1,7 @@
 # Spring的基本应用
 
+**archetypeCatalog        internal**
+
 ## 核心容器
 
 >Spring框架提供了两种核心容器，分别为BeanFactory和ApplicationContext。
@@ -192,14 +194,313 @@
 
   |           术语           |                             说明                             |
   | :----------------------: | :----------------------------------------------------------: |
-  |      Aspect (切面）      | :在实际应用中，切面通常是指封装的用于横向插入系统功能(如事务、 曰志等)的类， 该类要被 Spring 容器识别为切面，需要在配置文件中通 过\<bean>元素指定。 |
+  |      Aspect (切面）      | 在实际应用中，切面通常是指封装的用于横向插入系统功能(如事务、 曰志等)的类， 该类要被 Spring 容器识别为切面，需要在配置文件中通 过\<bean>元素指定。 |
   |    Joinpoint (连接点)    | 是指切面与程序流程的交叉点，即那些需要处理的连接点，如图 3-2 所示。 通常在程序中，切入点指的是类或者方法名，如某个通知要应用到所有以 add 开头的 方法中，那么所有满足这一规则的方法都是切 入点。 |
   |  Advice( 通知/增强处理)  | AOP 框架在特 定的切入点执行的增强处理，即在定义好的切入 点处所要执行的程序代码。 可以将其理解为切面 类中的方法，它是切面的具体实现。 |
-  | Target Object (目标对象) | :是指所有被 通知的对象，也称为被增强对象。 如果 AOP 框 架采用的是动态的 AOP 实现，那么该对象就是 一个被代理对象。 |
+  | Target Object (目标对象) | 是指所有被 通知的对象，也称为被增强对象。 如果 AOP 框 架采用的是动态的 AOP 实现，那么该对象就是 一个被代理对象。 |
   |       Proxy (代理)       |        将通知应用到目标对象之 后，被动态创建的对象。         |
-  |      Weaving (织入)      |    :将切面代码插入到目标对象上，从而生成代理对象的过程。     |
+  |      Weaving (织入)      |     将切面代码插入到目标对象上，从而生成代理对象的过程。     |
 
-  
+
+## 动态代理
+
+### JDK动态代理
+
+> JDK 动态代理是通过 java.lang.reflect. Proxy 类来实现的，我们可以调用 Proxy 类的 newProxyl nstanceO方法来创建代理对象。 对于使用业务接口的类， Spring 默认会使用 JDK 动 态代理来实现 AOP。 
+>
+> 实例:Demo9
+
+### CGLIB代理
+
+> JDK 动态代理的使用非常简单，但它还有一定的局限性一一使用动态代理的对象必须实现一 个或多个接口 。 如果要对没有实现接口的类进行代理，那么可以使用 CGL旧代理。 CGL旧( Code Generation Library )是一个高性能开源的代码生成包，它采用非常底层的字 节码技术，对指定的目标类生成一个子类，并对子类进行增强。 在 Spring 的核心包中已经集成 了 CGL旧所需要的包，所以开发中不需要另外导入 JAR 包。 
+
+## 基于代理类的AOP实现
+
+> Spring 中的 AOP 代理默认就是使用 JDK 动态代理的方式来实现的 。 在 Spring 中，使用 Proxy FactoryBean 是创建 AOP 代理的最基本方式。
+
+### Spring的通知类型
+
+> Spring 中的通知按照 在目标类方法的连接点位置，可以分为以下 5 种类型。 
+>
+> *  org. aopall iance. intercept. Method I nterceptor (环绕通知) 在目标方法执行前后实施增强，可以应用于曰志、事务管理等功能。
+> *  org.springframework.aop.MethodBeforeAdvice (前置通知) 在目标方法执行前实施增强，可以应用于权限管理等功能。 
+> * org.springframework.aop.AfterReturningAdvice (后置通知) 在目标方法执行后实施增强，可以应用于关闭流、上传文件、删除临时文件等功能。 
+> * org.springframework.aop.ThrowsAdvice (异常通知) 在方法抛出异常后实施增强，可以应用于处理异常记录曰志等功能。
+> * org .springframework.aop.1 ntroduction I nterceptor (引介通知) 在目标类中添加一些新的方法和属性，可以应用于修改老版本程序(增强类)。
+
+### ProxyFactoryBean
+
+> ProxyFactoryBean 是 FactoryBean 接口的实现类， FactoryBean 负责实例化一个 Bean ，而 ProxyFactoryBean 负责为其他 Bean 创建代理实例。 在 Spring 中，使用 ProxyFactoryBean 是 创建 AOP 代理的基本方式。 
+
+* ProxyFactoryBean的常用属性
+
+  |     属性名称     |                             描述                             |
+  | :--------------: | :----------------------------------------------------------: |
+  |      target      |                        代理的目标对象                        |
+  | proxylnterfaces  | 代理要实现的接口，如果是多个接口，可以使用以下格式赋值 \<Iist> \<value>\</value>...  \<br/>\</Iist> |
+  | proxyTargetClass |   是否对类代理而不是接口，设置为 true 时， 使用 CGLlB 代理   |
+  | interceptorNames |                    需要织入目标的 Advice                     |
+  |    singleton     |      返回的代理是否为单实例，默认为 true (即返回单实例)      |
+  |     optimize     |               当设置为 true 时，强制使用 CGLlB               |
+
+## AspectJ开发
+
+> AspectJ 是一个基于 Java 语言的 AOP 框架，它提供了强大的 AOP 功能。 
+>
+> 使用 AspectJ 实现 AOP 有两种方式:一种是基于 XML 的声明式 AspectJ ，另一种是基于注解的 声明式 AspectJ。
+
+### 基于XML的声明式Aspect J
+
+> 基于 XML 的声明式 AspectJ 是指通过 XML 文件来定义切面、切入点及通知，所有的切面、 切入点和通知都必须定义在\<aop:config>元素内。 
+
+1. 配置切面
+
+   * 在 Spring 的配置文件中 ，配置切面使用 的是\<aop:aspect>元素 ， 该元素会将一个已定 义好的 Spring Bean 转换成切面 Bean ， 所以要在配置文件中先定义一个普通的 Spring Bean ( 如上述代码中定义的 myAspect)。 定义完成后， 通过\<aop:aspect>元素的 ref 属性即可引 用该 Bean。 配置\<aop:aspect>元素时， 通常会指定 id 和 ref 两个属
+
+     id:用于定义该切面的唯一标识名称
+
+     ref:用于应用普通的Spring Bean
+
+2. 配置切入点
+
+   * 在 Spring 的配置文件中 ， 切入点是通过\<aop:pointcut>元素来定义的。 当 \<aop:pointcut> 元素作为\<aop:config>元素的子元素定义时，表示该切入点是全局切入点，它可被多个切面所 共享 ; 当 \<aop:pointcut>元素作为 \<aop:aspect>元素的子元素时，表示该切入点只对当前切面 有效。
+
+   * 在定义\<aop:poíntcut>元素时，通常会指定 id 和 expresslon 两个属性
+
+     id:用于指定切入点的唯一标识名称
+
+     expression:用于指定切入点关联的表达式
+
+   * **execution(* com. itheima.jdk. * .*(..))**就是定义的切入点表达式，该 切入点表达式的意思是匹配 com.itheima.jdk 包中任意类的任意方法的执行。 其中 executionO是 表达式的主体，第 1 个\*表示的是返回类型，使用\*代表所有类型; com.itheima.jdk 表示的是需 要拦截的包名，后面第 2 个\*表示的是类名，使用\*代表所有的类;第 3 个\*表示的是方法名，使 用\*表示所有方法;后面(..)表示方法的参数，其中的" .."表示任意参数。 需要注意的是，第 1 个*与包名之间有一个空格。 
+
+   * Spring AOP 中切入点表达 式的基本格式如下:
+
+     execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern) throws-pattern?)
+
+     * modifiers-pattern: 表示定义的目标方法的访问修饰符，如 public、 prívate 等。 
+     *  ret-type-pattern: 表示定义的目标方法的返回值类型，如 void 、 String 等。
+     *  declaring-type-pattern: 表示定义的目标方法的类路径，如 com.itheima.jdk.UserDaolmpl。 
+     * name-pattern: 表示具体需要被代理的目标方法，如 addO方法。
+     * param-pattern l 表示需要被代理的目标方法包含的参数，本章示例中目标方法参数都 为空。 
+     * throws-pattern: 表示需要被代理的目标方法抛出的异常类型。 
+
+     其中带有问号(? )的部分，如 modifiers-pattern、 declaring-type-pa忧ern 和 throws-pattern 表示可配置项;而其他部分属于必须配置项。
+
+3. 配置通知
+
+   在配置代码中，分别使用\<aop:aspect>的子元素配置了 5 种常用通知，这 5 个子元素不支 持使用子元素，但在使用时可以指定一些属性
+
+   |   属性名称   |                             描述                             |
+   | :----------: | :----------------------------------------------------------: |
+   |   pointcut   | 该属性用于指定一个切入点表达式， Spring 将在匹配该表达式的连接点时织入该通知 |
+   | pointcut-ref | 该属性指定一个已经存在的切入点名称，如配置代码中的 myPointCut。 通常 pointcut f口 Pointcut-ref 两个属性只需要使用冥中之一 |
+   |    method    | 该属性指定一个方法名，指定将切面 Bean 中的该方法转换为增强处理 |
+   |   throwing   | 该属性只对\<after-throwing>元素有效， E用于指定一个形参名，异常通知方法可以通过该形 参访问目标方法所抛出的异常 |
+   |  returning   | 该属性只对\<after-returning>元素有效， 2用于指定一个形参名，后置通知方法可以通过该形 参访问目标方法的返回值 |
+
+   * 实例：Demo11
+
+### 基于注解的声明式AspectJ
+
+> 与基于代理类的 AOP 实现相比，基于 XML 的声明式 ApectJ 要便捷得多，但是它也存在着一些 缺点，那就是要在 Spring 文件中配置大量的代码信息。 为了解决这个问题， AspectJ 框架为 AOP 的实现提供了一套注解，用以取代 Spring 配置文件中为实现 AOP 功能所配置的腕肿代码。 
+
+* AspectJ的注解及其描述
+
+  |    注解名称     |                             描述                             |
+  | :-------------: | :----------------------------------------------------------: |
+  |     @Aspect     |                       用于定义一个切面                       |
+  |    @Pointcut    | 用于定义切入点表达式。 在使用时还需定义一个包含名字和任意参数的方法签名来表示切入点 名称。 实际上，这个方法签名就是一个返回值为 void ，旦方法体为空的普通的方法 |
+  |     @Before     | 用于定义前置通知，相当于 BeforeAdvice。在使用时，通常需要指定一个 value 属性值， 该 属性值用于指定一个切入点表达式( 可以是己有的切入点，也可以直接定义切λ点表达式) |
+  | @AfterReturning | 用于定义后置通知，相当于 AfterReturningAdvice。在使用时可以指定 pOintcutlvalue 和 returning 属性，冥中 pointcut/value 这两个属性的作用一样，都用于指定切入点表达式。 returning 属性值用于表示 Advice 方法中可定义与此罔名的形参，该形参可用于访问目标方 法的返回值 |
+  |     @Around     | 用于定义环绕通知，相当于 MethodInterceptor。 在使用时需要指定一个 value 属性，该属性 用于指定该通知被植入的切入点 |
+  | @AfterThrowing  | 用于定义异常通知采处理程序中来处理的异常，相当于 ThrowAdvice 。在使用时可指定 pointcutlvalue 和 throwing 属性。 其中 pointcut/value 用于指定切入点表达式，而 throwing 属性值用于指定一个形参名来表示 Advice 方法中可定义与此罔名的形参，该形参可用于访问 目标方法抛出的异常 |
+  |     @After      | 用于定义最终 final 通知 ， 不管是否异常，该通知都会执行。使用时需要指定一个 value 属性， 该属性用于指定该通知被植入的切入点 |
+  | @DeclareParents | 用于定义引介通知，相当于 Introductionlnterceptor ( 不要求掌握) |
+
+* 实例：Demo12
+
+# Spring的数据库开发
+
+## Spring JDBC
+
+### Spring JdbcTemplate的解析
+
+> 针对数据库的操作， Spring 框架提供了 JdbcTemplate 类，该类是 Spring 框架数据抽象层的基 础，其他更高层次的抽象类却是构建于 JdbcTemplate 类之上。 可以说， Jdbc T emplate 类是 Spring JDBC 的核心类。 
+
+*  DataSource: 其主要功能是获取数据库连接，具体实现时还可以引入对数据库连接的缓 冲池和分布式事务的支持，它可以作为访问数据库资源的标准接口 。
+*  SOLExceptionTranslator: org.springframework.jdbc.suppO比SOLExceptionT ranslator 接口 负责对 SOLException 进行转译工作。 通过必要的设置或者获取 SOLExceptionT ranslator 中的 方法，可以使 JdbcTemplate 在需要处理 SOLException 时，委托 SOLExceptionT ranslator 的实 现类来完成相关的转译工作。
+
+### Spring JDBC的配置
+
+>  Spring JDBC 模块主要由 4 个包组成，分别是 core (核心包)、 dataSource (数据源包)、 object (对象包)和 support (支持包)
+
+* Spring JDBC中的主要国宝及说明
+
+  |    包名    |                             说明                             |
+  | :--------: | :----------------------------------------------------------: |
+  |    core    | 包含了 JDBC 的核心功能，包括 JdbcTemplate 类、 SimpleJdbclnsert 类、 SimpleJdbcCal1 类以及 NamedParameterJdbcTemplate 类 |
+  | dataSource | 访问数据源的实用工具类，白有多种数据源的实现，可以在 Java EE 容器外部测试 JDBC 代码 |
+  |   object   | 以面向对象的方式访问数据库， 它允许执行查询并将返回结果作为业务对象，可以在数据袤的列和 业务对象的属性之间映射查询结果 |
+  |  support   | 包含了 core 和 object 包的支持类，例如，提供异常转换功能的 SQLException 类 |
+
+* dataSource的4个属性
+
+  |      属性       |                      含义                       |
+  | :-------------: | :---------------------------------------------: |
+  | driverClassName | 所使用的驱动名称，对应驱动 JAR 包中的 Driver 类 |
+  |       url       |                 数据源所在地址                  |
+  |    username     |               访问数据库的用户名                |
+  |    password     |                访问数据库的密码                 |
+
+* 定义 jdbcTemplate 时，需要将 dataSource 注入到 jdbcTemplate 中，而其他需要使用 jdbcTempla恒的 Bean ，也需要将 jdbcTemplate 注入到该 Bean 中(通常注入到 Dao 类中，在 Dao 类中进行与数据库的相关操作)。
+
+## Spring JdbcTemplate的常用方法
+
+### execute()
+
+> execute(String sql)方法能够完成执行 SOL 语句的功能。 
+
+### update()
+
+> update()方法可以完成插入、更新和删除数据的操作。 
+
+* JdbcTemplate类中常用的update()方法
+
+  |                        方法                        |                             说明                             |
+  | :------------------------------------------------: | :----------------------------------------------------------: |
+  |               int update(String sql)               | 该方法是最简单的 update 万法重载形式，百直接执行传入的 SQL 语句，并返回受影响的行数 |
+  |      int update(PreparedStatementCreator psc)      | 该方法执行从 PreparedStatementCreator 返回的语句，然后 返回受影响的行数 |
+  | int update(String sql,PreparedStatementSetter pss) | 该方法通过 PreparedStatementSetter 设置 SQL 语句中的参 数，并返回受影响的行数 |
+  |       int update(String sql,Object... args)        | 该方法使用 Object...设置 SQL 语句中的参数，要求参数不能为 NULL ，并返回受影响的行数 |
+
+
+### query()
+
+> JdbcTemplate 类中还提供了大量的 queryO方法来处理各种对数据库表的查询操作。 
+
+* JdbcTemplate中常用的query()方法
+
+  |                             方法                             |                             说明                             |
+  | :----------------------------------------------------------: | :----------------------------------------------------------: |
+  |         List query(String sql, RowMapper rowMapper)          | 执行 String 类型参数提供的 SQL 语句，并通过 RowMapper 返回一个List 类型的结果 |
+  | List query (String sql, PreparedStatementSetter pss, RowMapper rowMapper ) | 根据 String 类型参数提供的 SQL 语句创建 PreparedStatement 对象，通过 RowMapper 将结 果返回到List 中 |
+  | List query ( String sql, ObjectD args, RowMapper rowMapper)  | 使用 Object口的值来设置 SQL 语句中的参数值，采用 RowMapper 回调万;去可以直接返回List 类型的制居 |
+  | queryForObject(String sql, RowMapper rowMapper, RowMapper Object... args) | j'ij- args 参数绑定到 SQL 语句中，并通过 RowMapper 返回一个 Object 类型的单行记录 |
+  | queryForList ( String sql,Object[] args， class\<T>  elementType) | 该方法可以返回多行数据的结果，但必须是返回列表 ，elementType 参数返回的是List 元素类型 |
+
+# Spring的事务管理
+
+## Spring事务管理概述
+
+### 事务管理的核心接口
+
+> 在 Spring 的所有 JAR 包中，包含一个名为 spring-tx-4.3.6.RELEASE 的 JAR 包，该包就是 Spring 提供的用于事务管理的依赖包。 
+
+1.  PlatformTransactionManager 
+
+   Platform T ransaction Manager 接口是 Spring 提供的平台事务管理器，主要用于管理事务。 
+
+   * TransactionStatus getTransaction ( TransactionDefinition definition ):用于获取事务状 态信息。 
+   *  void commit ( TransactionStatus status ):用于提交事务。
+   *  void rollback ( TransactionStatus status ):用于回滚事务。 
+
+    getTransaction ( TransactionDefinition definition )方法会根据 TransactionDefinition 参数返回一个 TransactionStatus 对象 , TransactionStatus 对象就表示一 个事务，它被关联在当前执行的线程上。
+
+   PlatformTransactionManager 接口有许多不同的实现类
+
+   * .springframework.jdbc.datasource. DataSourceTransactionManager: 用于配置 JDBC 数 据源的事务管理器。 
+   * org .springframework.orm. hibernate4. HibernateTransactionManager :用于配置 Hibernate 的事务管理器。
+   * org .springframework. transaction .jta.JtaTransactionManager: 用于配置全局事务管理器。
+
+2. TransactionDefinìtion
+
+   TransactionDefinition 接口是事务定义(描述)的对象，该对象中定义了事务规则，并提供 了获取事务相关信息的方法
+
+   * String getName(): 获取事务对象名称。
+   * int getlsolationLevel(): 获取事务的隔离级别。
+   * int getPropagationBehavior(): 获取事务的传播行为。 
+   * int getTimeout(): 获取事务的超时时间。 
+   * boolean isReadOnly(): 获取事务是否只读。
+
+   事务的传播行为是指在同一个方法中，不同操作前后所使用的事务。 
+
+
+
+# MyBatis
+
+> MyBatis (前身是 iBatis) 是一个支持普通 SOL 查询、存储过程以及高级映射的持久层框架， 它消除了几乎所有的 JDBC 代码和参数的手动设置以及对结果集的检索，并使用简单的 XML 或 注解进行配置和原始映射，用以将接口和 Java 的 POJO ( Plain Old Java Object，普通 Java 对 象)映射成数据库中的记录 使得 Java 开发人员可以使用面向对象的编程思想来操作数据库。 
+>
+> MyBatis 框架也被称之为 ORM (Object/Relational Mapping ，即对象关系映射)框架。 所 谓的 ORM 就是一种为了解决面向对象与关系型数据库中数据类型不匹配的技术，它通过描述 Java 对象与数据库表之间的映射关系，自动将 Java 应用程序中的对象持久化到关系型数据库的 表中。 
+
+## MyBatis入门
+
+>  \<mapper>元素是配置文件的根元素，它包含一个 namespace 属性，该属性为这个 \<mapper>指定了唯一的命名空间，通常会设置成"包名 +SQL 映射文件名"的形式。 子元素 \<select>中的信息是用于执行查询操作的配置 ，其 id 属性是<selecb元素在映射文件中的唯一 标识; paramete汀ype 属性用于指定传入参数的类型，这里表示传递给执行 SQL 的是一个 Integer 类型的参数j resultType 属性用于指定返回结果的类型，这里表示返回的数据是 Customer 类型。 在定义的查询 SQL 语句中， "#{)"用于表示一个占位符，相当于"?"，而 "#{id}" 表示该占位 符待接收参数的名称为 id
+
+# MyBatis的核心配置
+
+## Mybatis的核心对象
+
+> 在使用 MyBatis 框架时，主要涉及两个核心对象: SqlSessionFactory 和 SqlSession ，它们 在 MyBatis 框架中起着至关重要的作用。 
+
+### SqlSessionFactory
+
+> SqlSessionFactory 是 MyBatis 框架中十分重要的对象，它是单个数据库映射关系经过编译 后的内存镜像，其主要作用是创建 SqlSession .
+>
+> SqlSessionFactory 对象的实例可以通过 SqlSessionFactoryBuilder 对象来构建，而 SqlSessionFactoryBuilder 则可以通过 XML 配置文件 或一个预先定义好的 Configuratiori 实例构建出 SqlSessionFactory 的实例。 
+>
+> Sq ISessionFactory 对象是线程安全的，它一旦被创建，在整个应用执行期间都会存在。
+>
+> 构建 SqlSessionFactory 实例时，建议使用单列模式。 
+
+通过XML配置文件构建出的SqlSessionFactory
+
+```java
+读取配置文件 
+    InputStream inputStream = Resources.getResourceAsStream("配置文件位置n) ;
+     //根据配置文件构建 
+    SqlSessionFactory SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder() .build(inputStream); 
+```
+
+### SqlSession
+
+> SqlSession 是 MyBatis 框架中另一个重要的对象，它是应用程序与持久层之间执行交互操 作的一个单线程对象，其主要作用是执行持久化操作。
+>
+>  SqlSession 对象包含了数据库中所有执 行 SQL 操作的方法，由于其底层封装了 JDBC 连接，所以可以直接使用其实例来执行己映射的 SQL 语句。 
+
+SqlSession 对象中包含了很多方法，其常用方法如下所示:
+
+*  \<T> T selectOne ( String statement ):查询方法。 参数 statement 是在配置文件中定义的\<select>元素的 id。 使用该方法后，会返 回执行 SOL 语句查询结果的一条泛型对象。
+*  \<T> T selectOne ( String statement, Object parameter ); 查询方法。 参数 statement 是在配置文件中定义的\<select>元素的 id ， parameter 是查询所 需的参数。 使用该方法后，会返回执行 SOL 语句查询结果的一条泛型对象。 
+* \<E> List\<E> selectList ( String statement ); 查询方法。 参数 statement 是在配置文件中定义的\<select>元素的 id。 使用该方法后，会返 回执行 SOL 语句查询结果的泛型对象的集合。 
+*  \<E> List\<E> selectList ( String statement, Object parameter ); 查询方法。 参数 statement 是在配置文件中定义的<selecb元素的 id ， parameter 是查询所 需的参数。 使用该方法后，会返回执行 SOL 语句查询结果的泛型对象的集合。 
+*  void select ( String statement, Object parameter, ResultHandler handler ); 查询方法。 参数 statement 是在配置文件中定义的<selecb元素的 id ， parameter 是查询所 需的参数， ResultHandler 对象用于处理查询返回的复杂结果集，通常用于多表查询。 
+*  int insert ( String statement ); 插入方法。 参数 statement 是在配置文件中定义的<inserb元素的 id。 使用该方法后，会返 回执行 SOL 语句所影响的行数。 
+*  int insert ( String statement, Object parameter ); 插入方法。 参数 statement 是在配置文件中定义的<inserb元素的 id ， parameter 是插入所 需的参数。 使用该方法后，会返回执行 SOL 语句所影响的行数。 
+*  int update ( String statement ); 更新方法。 参数 statement 是在配置文件中定义的\<update>元素的 id。 使用该方法后，会 返回执行 SOL 语句所影响的行数。
+* int update ( String statement, Object parameter ); 更新方法。 参数 statement 是在配置文件中定义的\<update>元素的 id ， parameter 是更新 所需的参数。 使用该方法后，会返回执行 SOL 语句所影响的行数。 
+*  int delete ( String statement ); 删除方法。 参数 statement 是在配置文件中定义的\<delete>元素的 id。 使用该方法后，会返 回执行 SOL 语句所影响的行数。
+*  int delete ( String statement, Object parameter ); 删除方法。 参数 statement 是在配置文件中定义的\<delete>元素的 id ， parameter 是删除所 需的参数。 使用该方法后，会返回执行 SOL 语句所影响的行数。 
+* void commit(); 提交事务的方法。
+* void rollback() 回滚事务的方法。
+* void closeO j 关闭 SqlSession 对象。
+*  \<T> T getMappe r(Class\<T> type) j i衷方法会返回 Mapper 接口的代理对象，该对象关联了 SqlSession 对象，开发人员可以使 用该对象直接调用方法操作数据库。 参数 type 是 Mapper 的接口类型。 MyBatis 官方推荐通过 Mapper 对象访问 MyBatis。
+* Connection getConnectionO j 获取 JDBC 数据库连接对象的方法。    
+
+## 配置文件
+
+### 主要元素
+
+> 在 MyBatis 框架的核心配置文件中， \<configuration>元素是配置文件的根元素，其他元素 都要在 \<configuration>元素内配置。 
+
+### \<properties>元素
+
+> \<properties>是一个配置属性的元素，该元素通常用于将内部的配置外在化，即通过外部的 配置来动态地替换内部定义的属性。
+
+
+
+
+
+
 
 
 
