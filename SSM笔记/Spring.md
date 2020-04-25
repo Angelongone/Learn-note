@@ -496,11 +496,394 @@ SqlSession 对象中包含了很多方法，其常用方法如下所示:
 
 > \<properties>是一个配置属性的元素，该元素通常用于将内部的配置外在化，即通过外部的 配置来动态地替换内部定义的属性。
 
+jdbc.properties配置文件
 
+```properties
+jdbc.driver=com.mysql.jdbc.Driver 
+jdbc.url=jdbc:mysql://localhost:3306/mybatis 
+jdbc.username=root 
+jdbc.password=root 
+```
 
+mybatis-config.xml配置
 
+```xml
+<properties resource="jdbc.properties" /> 
+```
 
+修改配置文件中数据库连接的信息
 
+```xml
+<dataSource type="POOLED"> 
+    <!--数据库驱动--> 
+    <property name="driver" value="${jdbc.driver}" /> 
+    <!--连接数据库的 url -->
+              <property name="url" value="${jdbc.url}" />
+    <!--连接数据库的用户名--> 
+    <property name="username" value=#{jdbc.username}" />
+     <!--连接数据库的密码--> 
+    <property name="password" value="${jdbc.password}" />
+ </dataSource> 
+```
 
+### \<settings>元素
 
+> \<settings>元素主要用于改变 MyBatis 运行时的行为，例如开启二级缓存、开启延迟加载等。 虽然不配置\<settings>元素，也可以正常运行 MyBatis，但是熟悉\<settings>的配置内容以及它 们的作用还是十分必要的。 
 
+\<settings>元素中的常见配置及其描述
+
+|         设置参数          |                             描述                             |   有效值   | 默认值 |
+| :-----------------------: | :----------------------------------------------------------: | :--------: | :----: |
+|       cacheEnabled        |           该配置影响所苟映射器中配置的缓存全局开关           | truelfalse | false  |
+|    lazyLoadingEnabled     | 延迟力日载的全局开关。开启肘， )5，斤萄关联对象都会延迟h日载。特定关联关系中可以通过设置 fetchType 属性来覆盖该项的开关状态 | truelfalse |  true  |
+| multipleResultSetsEnabled |          是否允许单一语句返回多结果集(需要兼容驱动)          | truelfalse |  true  |
+|      useColumnLabel       | 使用列标签代替列名 。 不罔的驱动在这方面离不同的表使用列标签代替列名 。 不罔的驱动在这方面离不同的表用驱动的行为 | truelfalse | false  |
+
+### \<typeAliases>元素
+
+> \<typeAliases>元素用于为配置文件中的 Java 类型设置一个简短的名字，即设置别名。 
+
+```xml
+<!--定义别名--> 
+<typeAliases> 
+    <typeAlias alias="user" type="com.ang.dao.User"/> 
+</typeAliases> 
+```
+
+上述示例中， \<typeAliases>元素的子元素\<typeAlias>中的 type 属性用于指定需要被定义 别名的类的全限定名 j alias 属性的属性值 user 就是自定义的别名，它可以代替 com.itheima. po.User 使用在 MyBatis 文件的任何位置。 如果省略 alias 属性， MyBatis 会默认将类名首字母 小写后的名称作为别名。 
+
+* 当 POJO 类过多时，还可以通过自动扫描包的形式自定义别名，具体示例如下。
+
+  ```xml
+  <!--使用自动扫描包来定义别名--> 
+  <typeAliases> 
+      <package name="com.ang.dao"/> 
+  </typeAliases>
+  ```
+
+  上述示例中， \<typeAliases>元素的子元素\<package>中的 name 属性用于指定要被定义别 名的包， MyBatis 会将所有 com.itheima.po 包中的 POJO 类以首字母小写的非限定类名来作为 它的别名，比如 com.itheima.po.User 的别名为 user ， com.itheima.po.Custom凹的别名为 customer 等。 
+
+  * 需要注意的是，上述方式的别名只适用于没有使用注解的情况。 如果在程序中使用了注解， 则别名为其注解的值，具体如下。
+
+    ```java
+    @A1ias(value = "user") 
+    public class User { 
+        //User 的属性和方法
+        ...
+    }
+    ```
+
+### \<typeHandler>元素
+
+> MyBatis 在预处理语句( PreparedStatement )中设置一个参数或者从结果集( ResultSet ) 中取出一个值时，都会用其框架内部注册了的 typeHandler (类型处理器)进行相关处理。
+>
+> typeHandl凹的作用就是将预处理语句中传入的参数从 javaType ( Java 类型)转换为 jdbcType ( JDBC 类型)，或者从数据库取出结果时将 jdbcType 转换为 javaType。  
+
+### \<objectFactory>元素
+
+> MyBatis 框架每次创建结果对象的新实例时，都会使用一个对象工厂( ObjectFactory )的实 例来完成。 
+>
+>  MyBatis 中默认的 ObjectFactory 的作用就是实例化目标类，它既可以通过默认构造 方法实例化，也可以在参数映射存在的时候通过参数构造方法来实例化。 
+
+### \<plugins>元素
+
+> MyBatis 允许在已映射语句执行过程中的某一点进行拦截调用，这种拦截调用是通过插件来 实现的。
+
+### \<environments>元素
+
+> 在配置文件中， <environments>元素用于对环境进行配置。 MyBatis 的环境配置实际上就是 数据源的配置，我们可以通过<environments>元素配置多种数据源，即配置多种数据库。 
+
+###  POOLED 
+
+> 此数据源利用"池"的概念将 JDBC 连接对象组织起来，避免了在创建新的连接实例时所需 要初始化和认证的时间。 这种方式使得并发 Web 应用可以快速地响应请求，是当前流行的处理 方式(本书中使用的就是此种方式)。
+
+### \<mappers>元素
+
+在配置文件中， \<mappers>元素用于指定 MyBatis 映射文件的位置，一般可以使用以下4种 方法引入映射器文件
+
+1.  使用提路径引入
+
+   ```xml
+   <mappers> 
+       <mapper resource="com/itheima/mapper/UserMapper.xml "l> 
+           </mappers> 
+   ```
+
+2.  使用本地文件路径引入
+
+   ```xml
+   <mappers> 
+       <mapper url="file : ///D: /com/itheima/mapper/UserMapper.xml"/> </mappers> 
+   ```
+
+3. 使用接口类引入
+
+   ```xml
+   <mappers> 
+       <mapper class="com.itheima .mapper.UserMapper"/> 
+   </mappers>
+   ```
+
+4.  使用包名引入
+
+   ```xml
+   <mappers> 
+       <package name="com.itheima .mapper"/> 
+   </mappers> 
+   ```
+
+## 映射文件
+
+### \<select>元素
+
+> \<select>元素用于映射查询语句，它可以帮助我们从数据库中读取出数据，并组装数据给业 务开发人员。 
+
+# 动态SQL
+
+## 动态SQL中的元素
+
+> 动态SQL是MyBatis的强大特性之一，MyBatis3采用了功能强大的基于OGNL的表达式来完成动态SQL，它消除了之前版本中需要了解大多数元素，使用不到原来一半的元素就能完成所需要的工作
+
+Mybatis动态SQL中主要元素
+
+|              元素               |                             说明                             |
+| :-----------------------------: | :----------------------------------------------------------: |
+|              \<if>              |                 判断语句，用于单条件分支判断                 |
+| \<choose>(\<when>,\<otherwise>) | 相当于 jav句中的 switch...case...default 语句，用于多条件分支判断 |
+|     \<where>,\<trim>,\<set>     |        辅助元素，用于处理一些 SQL 拼装、 特殊字符问题        |
+|           \<foreach>            |             循环语句，常用于 In 语句等列举条件中             |
+|             \<bind>             | 从 OGNL 表达式中创建一个变量，并将主主绑定到上下文，常用于模糊 查询的 sql 中 |
+
+## 关联关系概述
+
+> 在关系型数据库中，多表之间存在着三种关联关系，分别为一对一 、 一对多和多对多，
+>
+> * 一对一:在任意一方引入对方主键作为外键。 
+> * 一对多:在"多"的一方，添加"一"的一方的主键作为外键。 
+> * 多对多:产生中间关系表，引入两张表的主键作为外键，两个主键成为联合主键或使用新 的宇段作为主键。  
+
+# Spring MVC
+
+## Spring MVC概述
+
+> Spring MVC 是 Spring 提供的一个实现了 Web MVC 设计模式的轻量级 Web 框架。
+>
+> Spring MVC 具有如下特点。 
+>
+> * 是 Spring 框架的一部分，可以方便地利用 Spring 所提供的其他功能。 
+> * 灵活性强，易于与其他框架集成。 
+> * 提供了一个前端控制器 DispatcherServlet，使开发人员无须额外开发控制器对象。 
+> * 可自动绑定用户输入，并能正确的转换数据类型。 
+> * 内置了常见的校验器，可以校验用户输入。 如果校验不能通过，那么就会重定向到输 入表单。 
+> * 支持国际化。 可以根据用户区域显示多国语言。 
+> * 支持多种视图技术。 它支持 JSP、 Velocity 和 FreeMarker 等视图技术。 
+> * 使用基于 XML 的配置文件，在编辑后，不需要重新编译应用程序。 
+
+# SpringMVC的核心类和注解
+
+## DispatcherServlet
+
+> DispatcherServlet 的全名是 org.spri ngframework. web .servlet. DispatcherServlet ，它在程序中 充当着前端控制器的角色。 
+
+```xml
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+  <servlet>
+      <!--配置前端过滤器-->
+    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+      <!--初始化时加载配置文件-->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:springmvc.xml</param-value>
+    </init-param>
+      <!--表示容器在启动时立即加载Servlet-->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+```
+
+## Controller注解类型
+
+> org.springframework.stereotype.Controller 注解类型用于指示 Spring 类的实例是一个控制 器，其注解形式为@Controller。 该注解在使用时不需要再实现 Controller 接口，只需要将@Controller注解加入到控制器类上，然后通过 Spring 的扫描机制找到标注了该注解的控制器即可。 
+
+* 使用\<context:component-scan>元素指定需要扫描的类包
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:mvc="http://www.springframework.org/schema/mvc"
+         xmlns:context="http://www.springframework.org/schema/context"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/mvc
+          http://www.springframework.org/schema/mvc/spring-mvc.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  
+      <!--开启注解扫描-->
+      <context:component-scan base-package="com.ang"/>
+  
+      <!--视图解析器-->
+      <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+          <property name="prefix" value="/WEB-INF/pages/"/>
+          <property name="suffix" value=".jsp"/>
+      </bean>
+  
+      <!--开启SpringMVC框架注解的支持-->
+      <mvc:annotation-driven/>
+  
+  </beans>
+  ```
+
+## RequestMapping注解类型
+
+### @RequestMapping注解的使用
+
+> Spring 通过@Controller 注解找到相应的控制器类后，还需要知道控制器内部对每一个请 求是如何处理的，这就需要使用。rg.springframework. web. bind .annotation.RequestMapping 注解类型 。 
+>
+> RequestMapping 注解类型用于映射一个请求或一个方法，其注解形式为 @RequestMapping ，可以使用该注解标注在一个方法或一个类上。 
+
+1. 标注在方法上
+
+   当标注在一个方法上时 ， 该方法将成为一个请求处理方法，它会在程序接收到对应的 URL 请求时被调用。 
+
+2. 标注在类上
+
+   当标注在一个类上时，该类中的所有方法都将映射为相对于类级别的请求 ， 表示该控制器所 处理的所有请求都被映射到 value 属性值所指定的路径下。 
+
+### @RequestMapping注解的属性
+
+| 属性名   | 类型           | 描述                                                         |
+| -------- | -------------- | ------------------------------------------------------------ |
+| name     | String         | 可选属性，用于为映射地址指定别名                             |
+| value    | String[]       | 可选属性，同时也是默认属性，用于映射一个请求和一种方法，可以标注在方法或一个类上 |
+| method   | RequesMethod[] | 可选属性，用于指定该方法用于处理那种类型的请求方式，请求方式包括GET,POST,PUT等。例如method=RequestMethod.GET表示只支持GET请求 |
+| params   | String[]       | 可选属性，用于指定Request中必须包含某些参数的值，才可以通过其标注的方法处理 |
+| headers  | String[]       | 可选属性，用于指定Request中必须包含某些指定的header的值，才可以通过其标注的方法处理 |
+| consumes | String[]       | 可选属性，用于指定处理请求的提交内容类型(Content-type)，比如application/json、text/html等 |
+| produces | String[]       | 可选属性，用于指定返回的内容类型，返回的内容类型必须是request请求头(Accept)中所包含的类型 |
+
+### 请求处理方法的参数类型和返回类型
+
+1. redirect重定向
+
+   ```java
+   @RequestMapping(value="/toEdit")
+   public String update(HttpServletRequest request,HttpServletResponse response,Model model){
+       ...
+       //请求转发
+       return "forward:editUser";
+   }
+   ```
+
+2. forward请求转发
+
+   ```java
+   @RequestMapping(value="/toEdit")
+   public String update(HttpServletRequest request,HttpServletResponse response,Model model){
+       ...
+       //请求转发
+       return "forward:editUser";
+   }
+   ```
+
+## ViewResolver(视图解析器)
+
+> Spring MVC 中的视图解析器负责解析视图，可以通过在配置文件中定义一个 ViewResolver 来配置视图解析器
+
+```xml
+<!--定义视图解析器-->
+<bean id="viewResolver" class="org.springframeword.web.servlet.view.InternalResourceViewResolver">
+    <!--设置前缀-->
+    <property name="prefix" value="/WEB-INF/jsp/"/>
+    <!--设置后缀-->
+    <property name="suffix" value=".jsp"/>
+</bean>
+```
+
+# 数据绑定
+
+## 数据绑定介绍
+
+> 在执行程序时， Spring MVC 会根据客户端请求参数的不同，将请求消息中的信息以一定的 方式转换并绑定到控制器类的方法参数中 。 
+>
+> 这种将请求消息数据与后台方法参数建立连接的过 程就是 Spring MVC 中的数据绑定。 
+>
+>  Spring MVC 框架会通过数据绑定组件( DataBinder )将请求参数串的 内容进行类型转换，然后将转换后的值赋给控制器类中方法的形参，这样后台方法就可以正确绑 定并获取客户端请求携带的参数了。 
+
+## 简单数据绑定
+
+### 绑定默认数据类型
+
+> 当前端请求的参数比较简单时，可以在后台方法的形参中直接使用 Spring MVC 提供的默认 参数类型进行数据绑定。
+
+* 常用的默认参数类型：
+
+  * HttpServletRequest:通过request对象获取请求信息
+  * HttpServletResponse:通过response处理响应信息。
+  * HttpSession:通过session对象得到session中储存的对象
+  * Model/ModelMap:Model是一个接口 ，ModelMap是一个接口实现，作用是将model数据填充到request域。
+
+  ```java
+      @RequestMapping("/select")
+      public String select(Integer id){
+          System.out.println("id=" + id);
+          return "index";
+      }
+  ```
+
+  
+
+### 绑定简单数据类型
+
+> 简单数据类型的绑定，就是指 Java 中几种基本数据类型的绑定，如 int、 String、 Double 等 类型。 
+
+@RequestParam注解
+
+| 属性         | 说明                                                         |
+| ------------ | ------------------------------------------------------------ |
+| value        | name属性的别名，这里指定参数的名字，即入参的请求参数名字，如value="item_id"表示请求的参数中名为item_id的参数的值将传入。如果只使用value属性，则可以省略value属性名 |
+| name         | 指定请求头绑定的名称                                         |
+| required     | 用于指定参数是否必须，默认是true，表示请求中一定要有相应的参数 |
+| defaultValue | 默认值，表示如果请求中没有同名参数时的默认值                 |
+
+### 绑定POJO类型
+
+> 在使用简单数据类型绑定时，可以很容易地根据具体需求来定义方法中的形参类型和个数， 然而在实际应用中，客户端请求可能会传递多个不同类型的参数数据，如果还使用简单数据类型 进行绑定，那么就需要手动编写多个不同类型的参数，这种操作显然比较烦琐。 此时就可以使用 POJO 类型进行数据绑定。
+>
+> POJO 类型的数据绑定就是将所有关联的请求参数封装在一个 POJO 中，然后在方法中直接 使用该 POJO 作为形参来完成数据绑定。 
+
+* 配置编码过滤器
+
+```xml
+  <filter>
+    <filter-name>Filter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+```
+
+### 绑定包装POJO
+
+> 使用简单 POJO 类型已经可以完成多数的数据绑定，但有时客户端请求中传递的参数会比较 复杂。 
