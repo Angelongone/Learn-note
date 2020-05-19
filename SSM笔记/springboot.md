@@ -244,4 +244,67 @@ public static void main(String[] args){
 <thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
 <thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
 ```
+### 2.Thymeleaf使用&语法
+> 只要我们把HTML页面放在classpath:/templates/，thymeleaf就能自动渲染;
+#### 使用
+1. 导入thymeleaf的名称空间
+```html
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+```
+2. 使用thymeleaf语法
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>thymeleaf</title>
+</head>
+<body>
+    <p th:text="'用户名：' + ${name}"></p>
+</body>
+</html>
+```
+### 3.语法规则
+1. th:text;改变当前元素里面的文本内容;
+	th:任意html属性来替换原生属性的值
+包含内容：
+* 片段包含 ：th:insert th:replace
+* 遍历：th:each
+* 判断：th:if th:unless th:switch th:case
+* 变量声明：th:object th:with
+* 任意变量属性修改：th:attr th:attrprepend
+* 修改指定属性默认值：th:value th:href th:src ....
+* 修改标签体内容：th:text(转义特殊字符) th:utext(不转义特殊字符)
+* 声明片段： th:fragment th:remogve
 
+2. 表达式
+```propertis
+Simple expressions:(表达式语法)
+	Variable Expressions:${...}:获取变量值：OGNL;
+	1. 获取对象的属性，调用方法
+	2. 使用内置对象：
+		#ctx: the context object
+		#vars: the context variables.
+		#locale: the context locale.
+		#request:(only in web Contexts) the HttpServletRequest object.
+		#response:(only in web Contexts) the HttpServletResponse object.
+		#session:(only in Web Contexts) the HttpSession object.
+		#servletContext:(only in Web Contexts) the ServletContext object.
+		例子：${session.foo}
+	3.内置的一些工具
+	Selection Variable Expressions: *{...}:选择表达式和${..}在功能上是一样的;
+		补充配合 th:object="${session.user}"
+		<div th:object="${session.user}">
+			<p>Name:<span th:tex="*{firstName}">Sebastian</span>.</p>
+			<p>Surname:<span th:tex="*{lastName}">Pepper</span>.</p>
+			<p>Nationality:<span th:tex="*{nationality}">Saturni</span>.</p>
+		</div>
+	Message Expressions:#{...}:获取国际化内容
+	Link URL Expressions:@{...}:定义URL
+		@{/order/process(execId=${execId},execType='FAST')}
+	Fragment Expressions:~{...}:片段引用表达式
+		<div th:insert="~{commons :: mainr}"></div>
+```
+### 如何修改SpringBoot的默认配置
+模式：
+	1. Springboot在自动配置很多组件的时候，先看容器中有没有用户自己配置的(@Bean，@Commponent)如果有就有用户配置的，如果没有，才自动配置如果有些组件可以有很多(ViewResolver)将用户配置的和自己默认的组合起来
