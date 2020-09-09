@@ -146,3 +146,90 @@ public class JunitTest {
   * 谁是切点（切点表达式配置）
   * 谁是通知（切面类中的增强方法）
   * 将切点和通知进行织入配置
+
+## 通知的类型
+![通知的类型](./noteImage/通知的类型.png)
+
+## 知识要点
+![通知的类型](./noteImage/通知知识要点.png)
+
+# 注解的aop开发
+## 开发步骤
+> 1. 创建目标接口和目标类（内部有切点）
+> 2. 创建切面类（内部有增强方法）
+> 3. 将目标类和切面类的对象创建权交给spring
+> 4. 在切面类中使用注解配置织入关系
+> 5. 在配置文件中开启组件扫描和AOP的自动代理
+> 6. 测试
+
+## aop注解通知类型
+![通知注解类型](./noteImage/aop注解通知类型.png)
+
+## aop切点表达式的抽取
+> 同xml配置aop一样，我们可以将切点表达式抽取，抽取方式是在切面内定义方法，在该方法上使用@Pointcut注解定义切点表达式，然后再在增强注解中进行引用。具体如下
+![通知注解类型](./noteImage/aop注解切点表达式.png)
+
+```java
+@Component("aopAnnoAdvice")
+@Aspect
+public class AopAnnoAdvice {
+
+    @Pointcut("execution(* ang.com.aopService.AopAnnoI.*(..))")
+    public void pointcut(){}
+
+    @Before("AopAnnoAdvice.pointcut()")
+    public void before(){
+        System.out.println("Anno执行 前置通知>>>>>>>>>");
+    }
+}
+```
+# Spring JdbcTemplate
+## 开发步骤
+> 1. 导入spring-jdbc和spring-tx坐标
+> 2. 创建数据库表和实体类
+> 3. 创建JdbcTemplate对象
+> 4. 执行数据库操作
+
+## Spring产生JdbcTemplate对象
+> 我们可以将JdbcTemplate的创建权交给Spring，将数据源DataSource的创建权也交给Spring，在Spring容器内部将数据源DataSource注入到JdbcTemplate模板对象中
+
+![Spring产生JdbcTemplate对象](./noteImage/JdbcTemplate对象.png)
+
+## 知识要点
+> 1. 导入Spring-jdbc和spring-tx坐标
+> 2. 创建数据库和实体类
+> 3. 创建JdbcTemplate对象
+>		```java
+		JdbcTemplate jdbcTemplate = new JdbcTemplate();
+		jdbcTemplate.setDataSource(dataSource);
+>		```
+> 4. 执行数据库操作
+>		更新操作：
+>		```java
+		jdbcTemplate.update(sql,params)
+>		```
+>		查询操作：
+>		```java
+		jdbcTemplate.query(sql,Mapper,params)
+		jdbcTemplate.queryForObject(sql,Mapper,params)
+>		```
+
+
+# 事务控制
+## 事物控制相关对象
+![](./noteImage/事务控制对象.png)
+
+## 事物的隔离级别
+![](./noteImage/事物的隔离级别.png)
+
+## 事物的传播行为
+![](./noteImage/事物的传播行为.png)
+
+## 事物状态对象
+![](./noteImage/事物状态对象.png)
+
+## 切点方法的事物参数的配置
+![](./noteImage/事物切点方法的配置.png)
+
+
+
