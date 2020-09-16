@@ -6,8 +6,7 @@
 jdbc.driver=com.mysql.jdbc.Driver
 jdbc.url=jdbc:mysql://localhost:3306/temp
 jdbc.username=root
-jdbc.password=angelong
-```
+jdbc.password=angelong ```
 
 [applicationContext.xml]()
 ```xml
@@ -199,17 +198,17 @@ public class AopAnnoAdvice {
 > 1. 导入Spring-jdbc和spring-tx坐标
 > 2. 创建数据库和实体类
 > 3. 创建JdbcTemplate对象
->		```java
+>	  ```java
 		JdbcTemplate jdbcTemplate = new JdbcTemplate();
 		jdbcTemplate.setDataSource(dataSource);
 >		```
 > 4. 执行数据库操作
 >		更新操作：
->		```java
+>	  ```java
 		jdbcTemplate.update(sql,params)
 >		```
 >		查询操作：
->		```java
+>	  ```java
 		jdbcTemplate.query(sql,Mapper,params)
 		jdbcTemplate.queryForObject(sql,Mapper,params)
 >		```
@@ -230,6 +229,193 @@ public class AopAnnoAdvice {
 
 ## 切点方法的事物参数的配置
 ![](./noteImage/事物切点方法的配置.png)
+payServiceImpl.java
+```java
+@service
+public class PayServiceImpl implements PayServiceI {
+
+    @Autowired
+    PayI payI;
+
+    public void payFor(String outusername, String inusername, Long paysize) {
+        payI.outPay(outusername,paysize);
+//        int i = 4/0;
+        payI.inPay(inusername,paysize);
+    }
+}
+```
+applicationContext.xml
+```xml
+ntext:component-scan base-package="com.ang"/>
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:jdbc.properties"/>
 
 
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+
+    <tx:advice id="txAdvice"  transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.ang.service.impl.*.*(..))"></aop:advisor>
+    </aop:config>
+```
+# SpringMVC
+## SpringMVC执行流程
+![](./noteImage/springmvc执行流程.png)
+## SpringMVC注解解析
+![](./noteImage/springmvc-RequestMapping.png)
+
+## SpringMVC知识要点
+![](./noteImage/springmvc知识要点.png)
+
+## SpringMVC的数据响应
+### 页面跳转
+#### 返回字符串形式
+![](./noteImage/spring返回字符串形式.png)
+
+#### 通过ModleAndView形式
+## 回写数据
+### 直接返回字符串
+![](./noteImage/spring回写数据直接返回字符串.png)
+![](./noteImage/springRepostBody.png)
+### 返回对象或集合
+![](./noteImage/spring返回对象或集合.png)
+![](./noteImage/springAnnotation-Driver.png)
+
+## SpringMVC获得请求数据
+### 获得基本类型参数
+![](./noteImage/springmvc获得基本类型.png)
+### 获得POJO类型参数
+![](./noteImage/springmvc获得POJO类型.png)
+### 获取数组类型参数
+![](./noteImage/springmvc获取数组类型.png)
+### 获取集合类型参数
+![](./noteImage/springmvc获取集合类型.png)
+![](./noteImage/springmvc获取集合类型1.png)
+![](./noteImage/springmvc静态资源访问.pngjo)
+### 请求数据乱码问题
+![](./noteImage/springmvc请求数据乱码.png)
+## SpringMVC参数绑定
+![](./noteImage/springmvc参数绑定.png)
+![](./noteImage/springmvc参数绑定1.png)
+## 获取Restful风格的参数
+![](./noteImage/restful风格.png)
+![](./noteImage/restful风格1.png)
+## 自定义类型转换器
+![](./noteImage/类型转换器.png)
+
+converter.java文件
+```java
+class DataConverter implements Converter<String, Date> {
+    @Override
+    public Date convert(String source) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = format.parse(source);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+```
+
+springmvc.xml
+```xml
+<mvc:annotation-driven conversion-service="conversionService"/>
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="com.ang.converter.DataConverter"/>
+            </list>
+        </property>
+    </bean>
+```
+## 获取请求头
+![](./noteImage/获取请求头.png)
+## 获取cookie
+![](./noteImage/获取cookie.png)
+
+## 文件上传
+![](./noteImage/文件上传.png)
+![](./noteImage/文件上传1.png)
+## 单文件上传步骤
+1. 导入fileupload和io坐标
+2. 配置文件上传解析器
+3. 编写文件上传代码
+![](./noteImage/spirngmvc单文件上传.png)
+![](./noteImage/springmvc单文件上传.png)
+![](./noteImage/springmvc单文件上传2.png)
+# SpringMVC拦截器
+## 拦截器步骤
+### 1.创建拦截器实现HandlerInterceptor接口
+MyInterceptor.java
+```java
+public class MyInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandle....");
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle...");
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion...");
+    }
+```
+### 2.配置拦截器
+springmvc.xml
+```xml
+<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.ang.interceptor.MyInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+```
+### 3.测试拦截器的拦截效果
+## 拦截器方法说明
+![](./noteImage/springmvc拦截器.png)
+
+# Java异常处理
+## 异常继承结构
+![](./noteImage/异常继承类.png)
+
+# SpringMVC异常处理
+## 异常处理思路
+![](./noteImage/springMVC异常处理思路.png)
+## 异常处理的两种方式
+![](./noteImage/springmvc异常处理的两种方式.png)
+
+## 简单的异常处理器SimpleMappingExceptionResolver
+![](./noteImage/springmvc简单的异常处理器.png)
+
+## 自定义异常处理步骤
+![](./noteImage/springmvc自定义异常.png)
+## 知识要点
+![](./noteImage/springmvc异常知识要点.png)
 
