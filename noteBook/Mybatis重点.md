@@ -411,11 +411,23 @@ UserMapper.xml
 
 >Spring的Service可以调用Dao层进行相应的操作
 
+
 ##代码实现
-### Acoount.java
-```java
-private int id;
-private String name;
-private double money;
-```
-[SSM整合]()
+
+### 各文件说明
+#### 普通方法实现SSM配置文件
+com.ang.mapper
+MapperConfig.xml
+applicationContext.xml
+jdbc.properties
+springmvc.xml
+
+#### Spring整合Mybatis方法配置文件
+com.ang.mapper
+MapperConfig-Spring.xml
+applicationContext.xml
+jdbc.properties
+springmvc.xml
+
+
+[SSM整合](https://github.com/Angelongone/Learn-note/tree/master/noteBook/example/SSM_Example)
