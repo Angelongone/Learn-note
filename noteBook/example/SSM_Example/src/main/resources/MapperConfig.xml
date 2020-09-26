@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties resource="jdbc.properties"/>
+
+<!--    定义实体类的别名 扫描包时别名名称为实体类首字母小写-->
+    <typeAliases>
+        <package name="com.ang.domain"/>
+    </typeAliases>
+    
+    <environments default="top">
+        <environment id="top">
+            <transactionManager type="JDBC"/><!--事物管理其采用JDBC-->
+            <dataSource type="POOLED"> <!--POOLED使用数据源-->
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+<!--    映射配置文件包扫描 注意不是目录层级不可用 . 应使用 /-->
+    <mappers>
+        <package name="com/ang/mapper"/>
+    </mappers>
+</configuration>

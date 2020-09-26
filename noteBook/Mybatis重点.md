@@ -399,3 +399,23 @@ UserMapper.xml
     List<User> findUserAndRoleAll();
 
 ```
+
+# SSM整合
+## Spring整合Mybatis思路
+![](./noteImage/mybatis/整合思路.png)
+![](./noteImage/mybatis/整合思路1.png)
+## 普通方法实现SSM
+>普通方式实现SSM整合其实就是将Spring和Mybatis想分离,各自实现自己的功能.
+
+>Mybatis负责Dao层是实现数据库的操作,可返回数据.
+
+>Spring的Service可以调用Dao层进行相应的操作
+
+##代码实现
+### Acoount.java
+```java
+private int id;
+private String name;
+private double money;
+```
+[SSM整合]()

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/mvc  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                            ">
+<!--    自动扫描包 主要扫描Controller层的包-->
+    <context:component-scan base-package="com.ang.controll"/>
+
+<!--    配置使用注解配置的方式-->
+    <mvc:annotation-driven/>
+
+<!--    内部资源解析器-->
+    <bean id="resourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="suffix" value=".jsp"/>
+        <property name="prefix" value="WEB-INF/pages/"/>
+    </bean>
+
+<!--    静态资源访问-->
+    <mvc:default-servlet-handler/>
+
+</beans>

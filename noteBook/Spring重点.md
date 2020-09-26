@@ -33,7 +33,7 @@ jdbc.password=angelong ```
 
 
 # Spring注解
-![Spring注解](./noteImage/Spring注解.png)
+![Spring注解](./noteImage/spring/Spring注解.png)
 
 
 # Spring注解开发注意
@@ -55,7 +55,7 @@ private UserDao userDao;
 > 当只使用@Autowired注解时，会按照数据类型从Spring容器中进行匹配（匹配必须唯一，否则会报错）
 
 # Spring新注解
-![Spring新注解](./noteImage/Spring新注解.png)
+![Spring新注解](./noteImage/spring/Spring新注解.png)
 
 [配置类 Config]()
 ```java
@@ -147,10 +147,10 @@ public class JunitTest {
   * 将切点和通知进行织入配置
 
 ## 通知的类型
-![通知的类型](./noteImage/通知的类型.png)
+![通知的类型](./noteImage/spring/通知的类型.png)
 
 ## 知识要点
-![通知的类型](./noteImage/通知知识要点.png)
+![通知的类型](./noteImage/spring/通知知识要点.png)
 
 # 注解的aop开发
 ## 开发步骤
@@ -162,11 +162,11 @@ public class JunitTest {
 > 6. 测试
 
 ## aop注解通知类型
-![通知注解类型](./noteImage/aop注解通知类型.png)
+![通知注解类型](./noteImage/spring/aop注解通知类型.png)
 
 ## aop切点表达式的抽取
 > 同xml配置aop一样，我们可以将切点表达式抽取，抽取方式是在切面内定义方法，在该方法上使用@Pointcut注解定义切点表达式，然后再在增强注解中进行引用。具体如下
-![通知注解类型](./noteImage/aop注解切点表达式.png)
+![通知注解类型](./noteImage/spring/aop注解切点表达式.png)
 
 ```java
 @Component("aopAnnoAdvice")
@@ -192,7 +192,7 @@ public class AopAnnoAdvice {
 ## Spring产生JdbcTemplate对象
 > 我们可以将JdbcTemplate的创建权交给Spring，将数据源DataSource的创建权也交给Spring，在Spring容器内部将数据源DataSource注入到JdbcTemplate模板对象中
 
-![Spring产生JdbcTemplate对象](./noteImage/JdbcTemplate对象.png)
+![Spring产生JdbcTemplate对象](./noteImage/spring/JdbcTemplate对象.png)
 
 ## 知识要点
 > 1. 导入Spring-jdbc和spring-tx坐标
@@ -216,19 +216,19 @@ public class AopAnnoAdvice {
 
 # 事务控制
 ## 事物控制相关对象
-![](./noteImage/事务控制对象.png)
+![](./noteImage/spring/事务控制对象.png)
 
 ## 事物的隔离级别
-![](./noteImage/事物的隔离级别.png)
+![](./noteImage/spring/事物的隔离级别.png)
 
 ## 事物的传播行为
-![](./noteImage/事物的传播行为.png)
+![](./noteImage/spring/事物的传播行为.png)
 
 ## 事物状态对象
-![](./noteImage/事物状态对象.png)
+![](./noteImage/spring/事物状态对象.png)
 
 ## 切点方法的事物参数的配置
-![](./noteImage/事物切点方法的配置.png)
+![](./noteImage/spring/事物切点方法的配置.png)
 payServiceImpl.java
 ```java
 @service
@@ -279,48 +279,48 @@ ntext:component-scan base-package="com.ang"/>
 ```
 # SpringMVC
 ## SpringMVC执行流程
-![](./noteImage/springmvc执行流程.png)
+![](./noteImage/spring/springmvc执行流程.png)
 ## SpringMVC注解解析
-![](./noteImage/springmvc-RequestMapping.png)
+![](./noteImage/spring/springmvc-RequestMapping.png)
 
 ## SpringMVC知识要点
-![](./noteImage/springmvc知识要点.png)
+![](./noteImage/spring/springmvc知识要点.png)
 
 ## SpringMVC的数据响应
 ### 页面跳转
 #### 返回字符串形式
-![](./noteImage/spring返回字符串形式.png)
+![](./noteImage/spring/spring返回字符串形式.png)
 
 #### 通过ModleAndView形式
 ## 回写数据
 ### 直接返回字符串
-![](./noteImage/spring回写数据直接返回字符串.png)
-![](./noteImage/springRepostBody.png)
+![](./noteImage/spring/spring回写数据直接返回字符串.png)
+![](./noteImage/spring/springRepostBody.png)
 ### 返回对象或集合
-![](./noteImage/spring返回对象或集合.png)
-![](./noteImage/springAnnotation-Driver.png)
+![](./noteImage/spring/spring返回对象或集合.png)
+![](./noteImage/spring/springAnnotation-Driver.png)
 
 ## SpringMVC获得请求数据
 ### 获得基本类型参数
-![](./noteImage/springmvc获得基本类型.png)
+![](./noteImage/spring/springmvc获得基本类型.png)
 ### 获得POJO类型参数
-![](./noteImage/springmvc获得POJO类型.png)
+![](./noteImage/spring/springmvc获得POJO类型.png)
 ### 获取数组类型参数
-![](./noteImage/springmvc获取数组类型.png)
+![](./noteImage/spring/springmvc获取数组类型.png)
 ### 获取集合类型参数
-![](./noteImage/springmvc获取集合类型.png)
-![](./noteImage/springmvc获取集合类型1.png)
-![](./noteImage/springmvc静态资源访问.pngjo)
+![](./noteImage/spring/springmvc获取集合类型.png)
+![](./noteImage/spring/springmvc获取集合类型1.png)
+![](./noteImage/spring/springmvc静态资源访问.pngjo)
 ### 请求数据乱码问题
-![](./noteImage/springmvc请求数据乱码.png)
+![](./noteImage/spring/springmvc请求数据乱码.png)
 ## SpringMVC参数绑定
-![](./noteImage/springmvc参数绑定.png)
-![](./noteImage/springmvc参数绑定1.png)
+![](./noteImage/spring/springmvc参数绑定.png)
+![](./noteImage/spring/springmvc参数绑定1.png)
 ## 获取Restful风格的参数
-![](./noteImage/restful风格.png)
-![](./noteImage/restful风格1.png)
+![](./noteImage/spring/restful风格.png)
+![](./noteImage/spring/restful风格1.png)
 ## 自定义类型转换器
-![](./noteImage/类型转换器.png)
+![](./noteImage/spring/类型转换器.png)
 
 converter.java文件
 ```java
@@ -351,20 +351,20 @@ springmvc.xml
     </bean>
 ```
 ## 获取请求头
-![](./noteImage/获取请求头.png)
+![](./noteImage/spring/获取请求头.png)
 ## 获取cookie
-![](./noteImage/获取cookie.png)
+![](./noteImage/spring/获取cookie.png)
 
 ## 文件上传
-![](./noteImage/文件上传.png)
-![](./noteImage/文件上传1.png)
+![](./noteImage/spring/文件上传.png)
+![](./noteImage/spring/文件上传1.png)
 ## 单文件上传步骤
 1. 导入fileupload和io坐标
 2. 配置文件上传解析器
 3. 编写文件上传代码
-![](./noteImage/spirngmvc单文件上传.png)
-![](./noteImage/springmvc单文件上传.png)
-![](./noteImage/springmvc单文件上传2.png)
+![](./noteImage/spring/spirngmvc单文件上传.png)
+![](./noteImage/spring/springmvc单文件上传.png)
+![](./noteImage/spring/springmvc单文件上传2.png)
 # SpringMVC拦截器
 ## 拦截器步骤
 ### 1.创建拦截器实现HandlerInterceptor接口
@@ -399,23 +399,23 @@ springmvc.xml
 ```
 ### 3.测试拦截器的拦截效果
 ## 拦截器方法说明
-![](./noteImage/springmvc拦截器.png)
+![](./noteImage/spring/springmvc拦截器.png)
 
 # Java异常处理
 ## 异常继承结构
-![](./noteImage/异常继承类.png)
+![](./noteImage/spring/异常继承类.png)
 
 # SpringMVC异常处理
 ## 异常处理思路
-![](./noteImage/springMVC异常处理思路.png)
+![](./noteImage/spring/springMVC异常处理思路.png)
 ## 异常处理的两种方式
-![](./noteImage/springmvc异常处理的两种方式.png)
+![](./noteImage/spring/springmvc异常处理的两种方式.png)
 
 ## 简单的异常处理器SimpleMappingExceptionResolver
-![](./noteImage/springmvc简单的异常处理器.png)
+![](./noteImage/spring/springmvc简单的异常处理器.png)
 
 ## 自定义异常处理步骤
-![](./noteImage/springmvc自定义异常.png)
+![](./noteImage/spring/springmvc自定义异常.png)
 ## 知识要点
-![](./noteImage/springmvc异常知识要点.png)
+![](./noteImage/spring/springmvc异常知识要点.png)
 
